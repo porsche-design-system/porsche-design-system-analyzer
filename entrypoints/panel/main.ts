@@ -33,6 +33,7 @@ interface AnalysisResults {
 
 let analysisResults: AnalysisResults | null = null;
 let currentTabId: number | null = null;
+const excludedElements = new Set<string>(); // tracked by xpath
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -86,8 +87,14 @@ analyzeBtn.addEventListener('click', async () => {
 });
 
 backBtn.addEventListener('click', () => {
-  mainView.classList.remove('hide');
   detailsView.classList.remove('show');
+  setTimeout(() => {
+    detailsView.style.display = 'none';
+    mainView.style.display = '';
+    // Force reflow so the transition plays
+    void mainView.offsetWidth;
+    mainView.classList.remove('hide');
+  }, 250);
 });
 
 // Click handler for stat boxes — delegated on quickStats
@@ -98,11 +105,28 @@ quickStats.addEventListener('click', (e) => {
   if (filter) showFilteredDetails(analysisResults, filter);
 });
 
-function showStatus(message: string, type: 'loading' | 'error' | 'success') {
-  status.textContent = message;
+let statusTimer: ReturnType<typeof setTimeout> | null = null;
+
+function showStatus(message: string, type: 'loading' | 'error' | 'success', duration = 4000) {
+  if (statusTimer) clearTimeout(statusTimer);
+  status.innerHTML = `<span class="status-text">${message}</span><button class="status-close" aria-label="Schließen">✕</button>`;
   status.className = `status ${type}`;
-  status.style.display = 'block';
+  status.style.display = 'flex';
+  if (duration > 0) {
+    statusTimer = setTimeout(hideStatus, duration);
+  }
 }
+
+function hideStatus() {
+  if (statusTimer) { clearTimeout(statusTimer); statusTimer = null; }
+  status.style.display = 'none';
+}
+
+status.addEventListener('click', (e) => {
+  if ((e.target as HTMLElement).classList.contains('status-close')) {
+    hideStatus();
+  }
+});
 
 // Human-readable type names for standard HTML elements
 const displayNames: Record<string, string> = {
@@ -166,11 +190,19 @@ const ariaRecommendations: Record<string, string[]> = {
 };
 
 function showFilteredDetails(data: AnalysisResults, filter: 'pds' | 'custom') {
-  mainView.classList.add('hide');
-  detailsView.classList.add('show');
+  const alreadyInDetails = detailsView.classList.contains('show');
+  if (!alreadyInDetails) {
+    mainView.classList.add('hide');
+    setTimeout(() => {
+      mainView.style.display = 'none';
+      detailsView.style.display = 'block';
+      void detailsView.offsetWidth;
+      detailsView.classList.add('show');
+    }, 250);
+  }
 
   const title = filter === 'pds' ? 'PDS Komponenten' : 'Custom Elemente';
-  detailsStats.innerHTML = `<div class="detail-title">${title}</div>`;
+  detailsStats.innerHTML = '';
 
   let html = '';
   if (filter === 'pds') {
@@ -186,7 +218,6 @@ function showFilteredDetails(data: AnalysisResults, filter: 'pds' | 'custom') {
   }
 
   detailsContent.innerHTML = html;
-  attachDetailClickHandlers();
 }
 
 function createCustomElementsView(data: AnalysisResults): string {
@@ -248,16 +279,34 @@ function createCustomElementsView(data: AnalysisResults): string {
       `;
     }
 
+    // Count excluded in this group
+    const groupXpaths = group.elements.map(e => e.xpath).filter(Boolean);
+    const excludedInGroup = groupXpaths.filter(x => excludedElements.has(x)).length;
+    const allExcluded = excludedInGroup === groupXpaths.length && groupXpaths.length > 0;
+    const activeCount = group.elements.length - excludedInGroup;
+    const groupClass = allExcluded ? ' excluded' : '';
+
+    // Bulk button only if more than 1 element
+    let bulkBtn = '';
+    if (group.elements.length > 1) {
+      if (allExcluded) {
+        bulkBtn = `<button class="exclude-bulk-btn active" data-bulk-xpaths="${groupXpaths.join('|||')}">Alle zurücksetzen</button>`;
+      } else {
+        bulkBtn = `<button class="exclude-bulk-btn" data-bulk-xpaths="${groupXpaths.join('|||')}">Alle akzeptieren</button>`;
+      }
+    }
+
     html += `
-      <div class="component-item custom-group">
+      <div class="component-item custom-group${groupClass}" data-type-name="${name}">
         <div class="custom-group-header">
           <div class="custom-group-title">
             <span class="custom-type-name">${name}</span>
             ${sourceLabel ? `<span class="custom-source-badge">${sourceLabel}</span>` : ''}
-            <span class="component-count warning-count">${group.elements.length}</span>
+            <span class="component-count warning-count">${activeCount > 0 ? activeCount : '✓'}</span>
           </div>
         </div>
         ${elementCards}
+        ${bulkBtn}
       </div>
     `;
   }
@@ -270,6 +319,8 @@ function createCustomElementCard(domInfo: DomInfo, recTags: string) {
     return `<div class="dom-info minimal"><span class="el-tag-badge">&lt;${domInfo.tag}&gt;</span></div>`;
   }
 
+  const isExcluded = excludedElements.has(domInfo.xpath);
+  const excludedClass = isExcluded ? ' excluded' : '';
   const textPreview = domInfo.text ? domInfo.text + (domInfo.text.length >= 30 ? '…' : '') : '';
   const xpathCommand = `$x('${domInfo.xpath}')[0]`;
 
@@ -302,7 +353,32 @@ function createCustomElementCard(domInfo: DomInfo, recTags: string) {
   // Row 5: XPath (full, copyable)
   rows.push(`<div class="el-detail"><span class="el-detail-label">XPath</span><code class="selector-code" data-copy-text="${xpathCommand}" title="Klicken zum Kopieren">${xpathCommand}</code><button class="highlight-btn" data-selector="${domInfo.xpath}" data-type="xpath" title="Auf Seite markieren">🔍</button></div>`);
 
-  return `<div class="dom-info">${rows.join('')}</div>`;
+  // Row 6: Exclude button
+  const excBtnLabel = isExcluded ? 'Zurücksetzen' : 'OK — Custom ist korrekt';
+  const excBtnClass = isExcluded ? 'exclude-el-btn active' : 'exclude-el-btn';
+  rows.push(`<button class="${excBtnClass}" data-exclude-xpath="${domInfo.xpath}">${excBtnLabel}</button>`);
+
+  return `<div class="dom-info${excludedClass}">${rows.join('')}</div>`;
+}
+
+function getCustomGroups(data: AnalysisResults) {
+  const groups = new Map<string, { count: number }>();
+  for (const [key, items] of Object.entries(data.standardHtml)) {
+    if (!Array.isArray(items)) continue;
+    const name = displayNames[key] || key;
+    if (!groups.has(name)) groups.set(name, { count: 0 });
+    groups.get(name)!.count += items.length;
+  }
+  for (const p of data.ariaPatterns) {
+    const name = p.pattern.replace(/\s*\(.*\)/, '');
+    if (!groups.has(name)) groups.set(name, { count: 0 });
+    groups.get(name)!.count += 1;
+  }
+  for (const [tag, count] of Object.entries(data.thirdParty)) {
+    if (!groups.has(tag)) groups.set(tag, { count: 0 });
+    groups.get(tag)!.count += count as number;
+  }
+  return groups;
 }
 
 function calcStats(results: AnalysisResults) {
@@ -316,10 +392,25 @@ function calcStats(results: AnalysisResults) {
   const patternCount = results.ariaPatterns.length;
   const thirdPartyInstances = Object.values(results.thirdParty).reduce((sum, c) => sum + c, 0);
   const thirdPartyComponents = Object.keys(results.thirdParty).length;
-  const nonDsInstances = htmlInstances + patternCount + thirdPartyInstances;
+
+  // Calculate excluded instances by xpath
+  let excludedInstances = 0;
+  if (excludedElements.size > 0) {
+    for (const items of Object.values(results.standardHtml)) {
+      if (!Array.isArray(items)) continue;
+      for (const item of items) {
+        if (item.xpath && excludedElements.has(item.xpath)) excludedInstances++;
+      }
+    }
+    for (const p of results.ariaPatterns) {
+      if (p.element.xpath && excludedElements.has(p.element.xpath)) excludedInstances++;
+    }
+  }
+
+  const nonDsInstances = htmlInstances + patternCount + thirdPartyInstances - excludedInstances;
   const totalInstances = dsInstances + nonDsInstances;
   const compliance = totalInstances > 0 ? Math.round((dsInstances / totalInstances) * 100) : 0;
-  return { dsInstances, dsComponents, htmlInstances, htmlComponents, patternCount, thirdPartyInstances, thirdPartyComponents, nonDsInstances, totalInstances, compliance };
+  return { dsInstances, dsComponents, htmlInstances, htmlComponents, patternCount, thirdPartyInstances, thirdPartyComponents, nonDsInstances, totalInstances, compliance, excludedInstances };
 }
 
 function renderStats(container: HTMLElement, results: AnalysisResults) {
@@ -404,35 +495,59 @@ function displayDetailedComponents(data: AnalysisResults) {
   }
 
   detailsContent.innerHTML = html;
-  attachDetailClickHandlers();
 }
 
-function attachDetailClickHandlers() {
-  detailsContent.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
+// Register detail click handlers ONCE via event delegation
+detailsContent.addEventListener('click', (e) => {
+  const target = e.target as HTMLElement;
 
-    if (target.classList.contains('highlight-btn')) {
-      const selector = target.getAttribute('data-selector');
-      if (selector) highlightElement(selector);
-    } else if (target.classList.contains('selector-code')) {
-      const text = target.getAttribute('data-copy-text') || target.textContent || '';
-      copyToClipboard(text);
-    } else if (target.classList.contains('expand-btn')) {
-      const componentItem = target.closest('.component-item');
-      const expandableContent = componentItem?.querySelector('.expandable-content');
-      if (!expandableContent) return;
-      const isExpanded = expandableContent.classList.contains('expanded');
+  if (target.classList.contains('highlight-btn')) {
+    const selector = target.getAttribute('data-selector');
+    if (selector) highlightElement(selector);
+  } else if (target.classList.contains('selector-code')) {
+    const text = target.getAttribute('data-copy-text') || target.textContent || '';
+    copyToClipboard(text);
+  } else if (target.classList.contains('expand-btn')) {
+    const componentItem = target.closest('.component-item');
+    const expandableContent = componentItem?.querySelector('.expandable-content');
+    if (!expandableContent) return;
+    const isExpanded = expandableContent.classList.contains('expanded');
 
-      if (isExpanded) {
-        expandableContent.classList.remove('expanded');
-        target.textContent = `▼ Alle ${target.getAttribute('data-count')} anzeigen`;
-      } else {
-        expandableContent.classList.add('expanded');
-        target.textContent = '▲ Weniger anzeigen';
-      }
+    if (isExpanded) {
+      expandableContent.classList.remove('expanded');
+      target.textContent = `▼ Alle ${target.getAttribute('data-count')} anzeigen`;
+    } else {
+      expandableContent.classList.add('expanded');
+      target.textContent = '▲ Weniger anzeigen';
     }
-  });
-}
+  } else if (target.classList.contains('exclude-el-btn')) {
+    const xpath = target.getAttribute('data-exclude-xpath');
+    if (xpath && analysisResults) {
+      if (excludedElements.has(xpath)) {
+        excludedElements.delete(xpath);
+      } else {
+        excludedElements.add(xpath);
+      }
+      renderStats(quickStats, analysisResults);
+      showFilteredDetails(analysisResults, 'custom');
+    }
+  } else if (target.classList.contains('exclude-bulk-btn')) {
+    const xpathsStr = target.getAttribute('data-bulk-xpaths');
+    if (xpathsStr && analysisResults) {
+      const xpaths = xpathsStr.split('|||').filter(Boolean);
+      const allExcluded = xpaths.every(x => excludedElements.has(x));
+      for (const x of xpaths) {
+        if (allExcluded) {
+          excludedElements.delete(x);
+        } else {
+          excludedElements.add(x);
+        }
+      }
+      renderStats(quickStats, analysisResults);
+      showFilteredDetails(analysisResults, 'custom');
+    }
+  }
+});
 
 function createComponentSection(
   title: string,
@@ -565,13 +680,19 @@ async function highlightElement(selector: string) {
   if (!currentTabId) return;
 
   try {
-    await browser.scripting.executeScript({
+    const results = await browser.scripting.executeScript({
       target: { tabId: currentTabId },
       func: highlightElementOnPage,
       args: [selector],
     });
+    const result = results?.[0]?.result as { found: boolean; visible: boolean } | undefined;
+    if (!result?.found) {
+      showStatus('Element nicht gefunden — Seite hat sich eventuell geändert.', 'error');
+    } else if (!result.visible) {
+      showStatus('Element ist versteckt (Overlay/Dialog) — öffne es auf der Seite und versuche es erneut.', 'loading', 6000);
+    }
   } catch (error) {
-    console.error('Error highlighting element:', error);
+    showStatus('Highlight fehlgeschlagen — Tab evtl. gewechselt.', 'error');
   }
 }
 
@@ -593,23 +714,35 @@ function highlightElementOnPage(selector: string) {
     element = document.querySelector(selector);
   }
 
-  if (element) {
-    element.classList.add('ds-analyzer-highlight');
-    (element as HTMLElement).style.setProperty('outline', '3px solid #FC4040', 'important');
-    (element as HTMLElement).style.setProperty('outline-offset', '2px', 'important');
-    (element as HTMLElement).style.setProperty('background-color', 'rgba(252, 64, 64, 0.1)', 'important');
-
-    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-    setTimeout(() => {
-      element!.classList.remove('ds-analyzer-highlight');
-      (element as HTMLElement).style.removeProperty('outline');
-      (element as HTMLElement).style.removeProperty('outline-offset');
-      (element as HTMLElement).style.removeProperty('background-color');
-    }, 5000);
-  } else {
-    alert('Element konnte nicht gefunden werden.');
+  if (!element) {
+    return { found: false, visible: false };
   }
+
+  // Check if element is visible (has layout and not hidden by ancestors)
+  const el = element as HTMLElement;
+  const isVisible = el.offsetParent !== null
+    || el.offsetWidth > 0
+    || el.offsetHeight > 0
+    || getComputedStyle(el).position === 'fixed';
+
+  if (!isVisible) {
+    return { found: true, visible: false };
+  }
+
+  element.classList.add('ds-analyzer-highlight');
+  el.style.setProperty('outline', '3px solid #FC4040', 'important');
+  el.style.setProperty('outline-offset', '2px', 'important');
+  el.style.setProperty('background-color', 'rgba(252, 64, 64, 0.1)', 'important');
+
+  element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  setTimeout(() => {
+    element!.classList.remove('ds-analyzer-highlight');
+    el.style.removeProperty('outline');
+    el.style.removeProperty('outline-offset');
+    el.style.removeProperty('background-color');
+  }, 5000);
+  return { found: true, visible: true };
 }
 
 function copyToClipboard(text: string) {

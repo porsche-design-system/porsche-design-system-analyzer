@@ -12,7 +12,8 @@ export default defineConfig({
     description:
       'Analysiert Websites auf Porsche Design System Compliance und identifiziert UI-Komponenten',
     version: '2.0.0',
-    permissions: ['activeTab', 'scripting'],
+    permissions: ['scripting'],
+    host_permissions: ['<all_urls>'],
     icons: {
       16: 'icon.png',
       32: 'icon.png',

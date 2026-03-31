@@ -11,6 +11,7 @@ npm install
 ## Development
 
 ```bash
+npm run build   # einmalig vor dem ersten Start nötig
 npm run dev
 ```
 
