@@ -1,0 +1,15 @@
+{
+  "name": "porsche-design-system-analyzer",
+  "version": "2.0.0",
+  "description": "Analysiert Websites auf Porsche Design System Compliance",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt build",
+    "zip": "wxt zip"
+  },
+  "dependencies": {
+    "wxt": "^0.20.20"
+  }
+}
