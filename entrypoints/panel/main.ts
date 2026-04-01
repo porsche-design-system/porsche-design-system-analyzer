@@ -44,11 +44,9 @@ extVersion.textContent = manifest.version;
 const analyzeBtn = $<HTMLButtonElement>('analyzeBtn');
 const status = $('status');
 const quickStats = $('quickStats');
-const backBtn = $<HTMLButtonElement>('backBtn');
 const mainView = $('mainView');
-const detailsView = $('detailsView');
-const detailsStats = $('detailsStats');
-const detailsContent = $('detailsContent');
+const tabContainer = $('tabContainer');
+const tabContent = $('tabContent');
 
 analyzeBtn.addEventListener('click', async () => {
   try {
@@ -72,6 +70,7 @@ analyzeBtn.addEventListener('click', async () => {
     if (results?.[0]?.result) {
       analysisResults = results[0].result as AnalysisResults;
       displayQuickStats(analysisResults);
+      showTabs(analysisResults);
       // Get the inspected page URL for display
       chrome.devtools.inspectedWindow.eval('location.hostname', (hostname: string) => {
         showStatus(`Analyse abgeschlossen für: ${hostname}`, 'success');
@@ -86,24 +85,19 @@ analyzeBtn.addEventListener('click', async () => {
   }
 });
 
-backBtn.addEventListener('click', () => {
-  detailsView.classList.remove('show');
-  setTimeout(() => {
-    detailsView.style.display = 'none';
-    mainView.style.display = '';
-    // Force reflow so the transition plays
-    void mainView.offsetWidth;
-    mainView.classList.remove('hide');
-  }, 250);
+// Tab bar click handler
+tabContainer.querySelector('.tab-bar')!.addEventListener('click', (e) => {
+  const btn = (e.target as HTMLElement).closest('.tab-btn') as HTMLElement | null;
+  if (!btn || !analysisResults) return;
+  const tab = btn.getAttribute('data-tab') as 'pds' | 'custom';
+  if (!tab) return;
+  // Update active tab button
+  tabContainer.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTabContent(analysisResults, tab);
 });
 
-// Click handler for stat boxes — delegated on quickStats
-quickStats.addEventListener('click', (e) => {
-  const stat = (e.target as HTMLElement).closest('.stat[data-filter]') as HTMLElement | null;
-  if (!stat || !analysisResults) return;
-  const filter = stat.getAttribute('data-filter') as 'pds' | 'custom';
-  if (filter) showFilteredDetails(analysisResults, filter);
-});
+
 
 let statusTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -189,35 +183,23 @@ const ariaRecommendations: Record<string, string[]> = {
   'Progress / Stepper': ['p-stepper-horizontal'],
 };
 
-function showFilteredDetails(data: AnalysisResults, filter: 'pds' | 'custom') {
-  const alreadyInDetails = detailsView.classList.contains('show');
-  if (!alreadyInDetails) {
-    mainView.classList.add('hide');
-    setTimeout(() => {
-      mainView.style.display = 'none';
-      detailsView.style.display = 'block';
-      void detailsView.offsetWidth;
-      detailsView.classList.add('show');
-    }, 250);
-  }
+function showTabs(data: AnalysisResults) {
+  tabContainer.style.display = '';
+  renderTabContent(data, 'pds');
+}
 
-  const title = filter === 'pds' ? 'PDS Komponenten' : 'Custom Elemente';
-  detailsStats.innerHTML = '';
-
+function renderTabContent(data: AnalysisResults, tab: 'pds' | 'custom') {
   let html = '';
-  if (filter === 'pds') {
+  if (tab === 'pds') {
     if (Object.keys(data.designSystem).length > 0) {
       html += createComponentSection('Design System Komponenten', data.designSystem, 'success');
     }
+    if (!html) html = '<div class="empty-state">Keine PDS Komponenten gefunden</div>';
   } else {
-    html += createCustomElementsView(data);
+    html = createCustomElementsView(data);
+    if (!html) html = '<div class="empty-state">Keine Custom Elemente gefunden</div>';
   }
-
-  if (!html) {
-    html = `<div class="empty-state">Keine ${title} gefunden</div>`;
-  }
-
-  detailsContent.innerHTML = html;
+  tabContent.innerHTML = html;
 }
 
 function createCustomElementsView(data: AnalysisResults): string {
@@ -262,22 +244,11 @@ function createCustomElementsView(data: AnalysisResults): string {
   for (const [name, group] of groups) {
     const sourceLabel = group.source === 'aria' ? 'ARIA Pattern' : group.source === 'thirdparty' ? 'Third-Party' : '';
 
-    const visibleItems = group.elements.slice(0, 3);
-    const hiddenItems = group.elements.slice(3);
-
     const recTags = group.pdsRec.length > 0
       ? group.pdsRec.map((r) => `<code class="rec-tag">${r}</code>`).join(' ')
       : '';
 
-    let elementCards = visibleItems.map((info) => createCustomElementCard(info, recTags)).join('');
-    if (hiddenItems.length > 0) {
-      elementCards += `
-        <button class="expand-btn" data-count="${group.elements.length}">▼ Alle ${group.elements.length} anzeigen</button>
-        <div class="expandable-content">
-          ${hiddenItems.map((info) => createCustomElementCard(info, recTags)).join('')}
-        </div>
-      `;
-    }
+    const elementCards = group.elements.map((info) => createCustomElementCard(info, recTags)).join('');
 
     // Count excluded in this group
     const groupXpaths = group.elements.map(e => e.xpath).filter(Boolean);
@@ -297,17 +268,19 @@ function createCustomElementsView(data: AnalysisResults): string {
     }
 
     html += `
-      <div class="component-item custom-group${groupClass}" data-type-name="${name}">
-        <div class="custom-group-header">
+      <details class="component-item custom-group${groupClass}" data-type-name="${name}">
+        <summary class="custom-group-header">
           <div class="custom-group-title">
             <span class="custom-type-name">${name}</span>
             ${sourceLabel ? `<span class="custom-source-badge">${sourceLabel}</span>` : ''}
             <span class="component-count warning-count">${activeCount > 0 ? activeCount : '✓'}</span>
           </div>
+        </summary>
+        <div class="custom-group-body">
+          ${elementCards}
+          ${bulkBtn}
         </div>
-        ${elementCards}
-        ${bulkBtn}
-      </div>
+      </details>
     `;
   }
 
@@ -452,16 +425,8 @@ function renderStats(container: HTMLElement, results: AnalysisResults) {
       <div class="stat-value ${compliance >= 70 ? 'success' : compliance >= 40 ? 'warning' : 'error'}">${compliance}%</div>
       <div>Compliance</div>
     </div>
-    <div class="stat clickable" data-filter="pds">
-      <div class="stat-value success">${dsInstances}</div>
-      <div>PDS</div>
-    </div>
-    <div class="stat clickable" data-filter="custom">
-      <div class="stat-value warning">${nonDsInstances}</div>
-      <div>Custom</div>
-    </div>
     <div class="stat full-width compliance-formula">
-      <div>${dsInstances} PDS ÷ ${totalInstances} Gesamt = ${compliance}% Compliance</div>
+      <div><span class="success">${dsInstances}</span> PDS ÷ <span class="warning">${totalInstances}</span> Gesamt = <span class="${compliance >= 70 ? 'success' : compliance >= 40 ? 'warning' : 'error'}">${compliance}%</span> Compliance</div>
     </div>
   `;
 }
@@ -471,34 +436,8 @@ function displayQuickStats(results: AnalysisResults) {
   quickStats.style.display = 'grid';
 }
 
-function displayDetailedStats(results: AnalysisResults) {
-  renderStats(detailsStats, results);
-}
-
-function displayDetailedComponents(data: AnalysisResults) {
-  let html = '';
-
-  if (Object.keys(data.designSystem).length > 0) {
-    html += createComponentSection('Design System Komponenten', data.designSystem, 'success');
-  }
-
-  if (data.ariaPatterns.length > 0) {
-    html += createPatternSection('ARIA-Pattern Erkennungen', data.ariaPatterns);
-  }
-
-  if (Object.keys(data.standardHtml).length > 0) {
-    html += createComponentSection('Standard HTML Elemente', data.standardHtml, 'warning', true);
-  }
-
-  if (Object.keys(data.thirdParty).length > 0) {
-    html += createComponentSection('Third-Party Komponenten', data.thirdParty, 'error');
-  }
-
-  detailsContent.innerHTML = html;
-}
-
 // Register detail click handlers ONCE via event delegation
-detailsContent.addEventListener('click', (e) => {
+tabContent.addEventListener('click', (e) => {
   const target = e.target as HTMLElement;
 
   if (target.classList.contains('highlight-btn')) {
@@ -529,7 +468,7 @@ detailsContent.addEventListener('click', (e) => {
         excludedElements.add(xpath);
       }
       renderStats(quickStats, analysisResults);
-      showFilteredDetails(analysisResults, 'custom');
+      renderTabContent(analysisResults, 'custom');
     }
   } else if (target.classList.contains('exclude-bulk-btn')) {
     const xpathsStr = target.getAttribute('data-bulk-xpaths');
@@ -544,7 +483,7 @@ detailsContent.addEventListener('click', (e) => {
         }
       }
       renderStats(quickStats, analysisResults);
-      showFilteredDetails(analysisResults, 'custom');
+      renderTabContent(analysisResults, 'custom');
     }
   }
 });

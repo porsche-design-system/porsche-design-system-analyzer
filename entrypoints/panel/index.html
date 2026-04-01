@@ -17,14 +17,14 @@
         <button id="analyzeBtn" class="analyze-btn">Website analysieren</button>
 
         <div id="quickStats" class="quick-stats" style="display: none;"></div>
-    </div>
 
-    <div id="detailsView" class="details-view">
-        <button id="backBtn" class="back-btn">← Zurück zur Übersicht</button>
-
-        <div id="detailsStats" class="stats-grid"></div>
-
-        <div id="detailsContent"></div>
+        <div id="tabContainer" class="tab-container" style="display: none;">
+            <div class="tab-bar">
+                <button class="tab-btn active" data-tab="pds">PDS Komponenten</button>
+                <button class="tab-btn" data-tab="custom">Custom Elemente</button>
+            </div>
+            <div id="tabContent" class="tab-content"></div>
+        </div>
     </div>
 
     <script type="module" src="./main.ts"></script>
