@@ -19,6 +19,8 @@ Chrome DevTools Extension for analyzing websites for Porsche Design System compl
 2. Select the **"PDS Analyzer"** tab in DevTools
 3. Click **"Seite analysieren"**
 
+![PDS Analyzer](sample.png)
+
 ---
 
 ## Development
