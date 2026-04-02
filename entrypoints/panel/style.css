@@ -122,12 +122,37 @@ body {
 }
 
 .tab-btn:hover {
-    color: var(--color-primary-dark);
+    color: #ccc;
 }
 
-.tab-btn.active {
-    color: var(--color-primary-dark);
-    border-bottom-color: var(--color-primary-dark);
+.tab-btn.active[data-tab="pds"] {
+    color: var(--color-success-dark);
+    border-bottom-color: var(--color-success-dark);
+}
+
+.tab-btn.active[data-tab="custom"] {
+    color: var(--color-warning-dark);
+    border-bottom-color: var(--color-warning-dark);
+}
+
+.tab-count {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+    padding: 1px 6px;
+    border-radius: 8px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+.tab-count.success {
+    background: rgba(1, 180, 120, 0.15);
+    color: var(--color-success-dark);
+}
+
+.tab-count.warning {
+    background: rgba(255, 168, 0, 0.15);
+    color: var(--color-warning-dark);
 }
 
 .tab-content {
@@ -459,6 +484,7 @@ body {
     padding: var(--spacing-sm);
     margin-top: var(--spacing-sm);
     font-size: 12px;
+    position: relative;
 }
 
 .element-tag {
@@ -515,6 +541,9 @@ body {
 }
 
 .highlight-btn {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
     background: var(--color-info-dark);
     color: var(--color-base-dark);
     border: none;
@@ -525,6 +554,7 @@ body {
     font-weight: var(--font-weight-semibold);
     transition: all 0.2s ease;
     white-space: nowrap;
+    line-height: 1;
 }
 
 .highlight-btn:hover {
@@ -836,6 +866,9 @@ details.custom-group > summary {
     cursor: pointer;
     padding: var(--spacing-sm) var(--spacing-md);
     transition: background 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
 }
 
 details.custom-group > summary::-webkit-details-marker {
@@ -845,11 +878,11 @@ details.custom-group > summary::-webkit-details-marker {
 details.custom-group > summary::before {
     content: '▸';
     display: inline-block;
-    margin-right: var(--spacing-sm);
     font-size: 12px;
     color: var(--color-contrast-medium-dark);
     transition: transform 0.2s ease;
     flex-shrink: 0;
+    line-height: 1;
 }
 
 details.custom-group[open] > summary::before {

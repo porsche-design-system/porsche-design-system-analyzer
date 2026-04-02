@@ -1,23 +1,23 @@
 # Porsche Design System Analyzer
 
-Chrome DevTools Extension zur Analyse von Websites auf Porsche Design System Compliance. Identifiziert UI-Komponenten und prüft die korrekte Verwendung des Design Systems.
+Chrome DevTools Extension for analyzing websites for Porsche Design System compliance. Identifies UI components and checks correct usage of the Design System.
 
 ## Download & Installation
 
-**[⬇ Extension herunterladen](https://github.com/porsche-design-system/porsche-design-system-analyzer/raw/main/porsche-design-system-analyzer-chrome.zip)**
+**[⬇ Download Extension](https://github.com/porsche-design-system/porsche-design-system-analyzer/raw/main/porsche-design-system-analyzer-v2.1.0-chrome.zip)**
 
-### Chrome installieren
+### Install in Chrome
 
-1. ZIP-Datei herunterladen und entpacken
-2. Chrome öffnen → `chrome://extensions`
-3. **Entwicklermodus** oben rechts aktivieren
-4. **"Entpackte Erweiterung laden"** klicken → den entpackten Ordner auswählen
+1. Download and unzip the ZIP file
+2. Open Chrome → `chrome://extensions`
+3. Enable **Developer mode** (top right)
+4. Click **"Load unpacked"** → select the unzipped folder
 
-### Benutzen
+### Usage
 
-1. Rechtsklick auf eine Website → **"Untersuchen"** (oder `F12`)
-2. In den DevTools den Tab **"PDS Analyzer"** auswählen
-3. **"Seite analysieren"** klicken
+1. Right-click on a website → **"Inspect"** (or `F12`)
+2. Select the **"PDS Analyzer"** tab in DevTools
+3. Click **"Seite analysieren"**
 
 ---
 
@@ -28,22 +28,22 @@ npm install
 npm run dev
 ```
 
-Öffnet Chrome mit der Extension und navigiert automatisch zu porsche.com.
+Opens Chrome with the extension and automatically navigates to porsche.com.
 
 ## Build
 
 ```bash
-npm run build    # Extension bauen
-npm run zip      # ZIP für Chrome Web Store erstellen
+npm run build    # Build the extension
+npm run zip      # Create ZIP for Chrome Web Store
 ```
 
-Nach dem Build die ZIP im Root aktualisieren:
+After building, update the ZIP in the repo root:
 
 ```bash
 cp .output/porsche-design-system-analyzer-*-chrome.zip ./porsche-design-system-analyzer-chrome.zip
 ```
 
-## Technologie
+## Technology
 
 - [WXT](https://wxt.dev/) — Browser Extension Framework
 - TypeScript

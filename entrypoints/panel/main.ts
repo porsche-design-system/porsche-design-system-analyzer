@@ -183,8 +183,20 @@ const ariaRecommendations: Record<string, string[]> = {
   'Progress / Stepper': ['p-stepper-horizontal'],
 };
 
+function updateTabCounts(data: AnalysisResults) {
+  const stats = calcStats(data);
+  const pdsBtn = tabContainer.querySelector('.tab-btn[data-tab="pds"]')!;
+  const customBtn = tabContainer.querySelector('.tab-btn[data-tab="custom"]')!;
+  pdsBtn.innerHTML = `PDS Elemente <span class="tab-count success">${stats.dsInstances}</span>`;
+  customBtn.innerHTML = `Custom Elemente <span class="tab-count warning">${stats.nonDsInstances}</span>`;
+}
+
 function showTabs(data: AnalysisResults) {
   tabContainer.style.display = '';
+  updateTabCounts(data);
+  // Reset to PDS tab active
+  tabContainer.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  tabContainer.querySelector('.tab-btn[data-tab="pds"]')!.classList.add('active');
   renderTabContent(data, 'pds');
 }
 
@@ -192,9 +204,9 @@ function renderTabContent(data: AnalysisResults, tab: 'pds' | 'custom') {
   let html = '';
   if (tab === 'pds') {
     if (Object.keys(data.designSystem).length > 0) {
-      html += createComponentSection('Design System Komponenten', data.designSystem, 'success');
+      html += createComponentList(data.designSystem);
     }
-    if (!html) html = '<div class="empty-state">Keine PDS Komponenten gefunden</div>';
+    if (!html) html = '<div class="empty-state">Keine PDS Elemente gefunden</div>';
   } else {
     html = createCustomElementsView(data);
     if (!html) html = '<div class="empty-state">Keine Custom Elemente gefunden</div>';
@@ -284,7 +296,7 @@ function createCustomElementsView(data: AnalysisResults): string {
     `;
   }
 
-  return `<div class="component-section"><div class="section-header warning"><span class="section-icon">⚠</span>Custom Elemente <span class="section-counts">${groups.size} Typen · ${[...groups.values()].reduce((s, g) => s + g.elements.length, 0)}× gefunden</span></div>${html}</div>`;
+  return `<div class="component-section">${html}</div>`;
 }
 
 function createCustomElementCard(domInfo: DomInfo, recTags: string) {
@@ -426,7 +438,7 @@ function renderStats(container: HTMLElement, results: AnalysisResults) {
       <div>Compliance</div>
     </div>
     <div class="stat full-width compliance-formula">
-      <div><span class="success">${dsInstances}</span> PDS ÷ <span class="warning">${totalInstances}</span> Gesamt = <span class="${compliance >= 70 ? 'success' : compliance >= 40 ? 'warning' : 'error'}">${compliance}%</span> Compliance</div>
+      <div><span class="success">${dsInstances}</span> PDS Elemente / <span class="neutral">${totalInstances}</span> Gesamt Elemente = <span class="${compliance >= 70 ? 'success' : compliance >= 40 ? 'warning' : 'error'}">${compliance}%</span> Compliance</div>
     </div>
   `;
 }
@@ -468,6 +480,7 @@ tabContent.addEventListener('click', (e) => {
         excludedElements.add(xpath);
       }
       renderStats(quickStats, analysisResults);
+      updateTabCounts(analysisResults);
       renderTabContent(analysisResults, 'custom');
     }
   } else if (target.classList.contains('exclude-bulk-btn')) {
@@ -483,10 +496,27 @@ tabContent.addEventListener('click', (e) => {
         }
       }
       renderStats(quickStats, analysisResults);
+      updateTabCounts(analysisResults);
       renderTabContent(analysisResults, 'custom');
     }
   }
 });
+
+function createComponentList(components: Record<string, number | DomInfo[]>) {
+  let html = '';
+  Object.entries(components).forEach(([component, data]) => {
+    const count = Array.isArray(data) ? data.length : data;
+    html += `
+      <div class="component-item">
+        <div class="component-header">
+          <span class="component-name">&lt;${component}&gt;</span>
+          <span class="component-count">${count}</span>
+        </div>
+      </div>
+    `;
+  });
+  return html;
+}
 
 function createComponentSection(
   title: string,
@@ -604,12 +634,12 @@ function createDomInfoCard(domInfo: DomInfo) {
 
   return `
     <div class="dom-info">
+      <button class="highlight-btn" data-selector="${domInfo.xpath}" data-type="xpath" title="Element markieren">🔍</button>
       <div class="element-tag">&lt;${domInfo.tag} ${classInfo} ${idInfo} ${attributes.trim()}&gt;</div>
       ${textPreview ? `<div class="element-text">${textPreview}</div>` : ''}
       <div class="selector-row">
         <span class="selector-label">XPath:</span>
         <code class="selector-code" data-copy-text="${xpathCommand}" title="Klicken zum Kopieren">${xpathCommand}</code>
-        <button class="highlight-btn" data-selector="${domInfo.xpath}" data-type="xpath" title="Element markieren">🔍</button>
       </div>
     </div>
   `;

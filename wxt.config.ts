@@ -1,4 +1,7 @@
 import { defineConfig } from 'wxt';
+import pkg from './package.json' with { type: 'json' };
+
+const version = pkg.version;
 
 export default defineConfig({
   // Open porsche.com when starting dev server
@@ -8,10 +11,11 @@ export default defineConfig({
     keepProfileChanges: true,
   },
   manifest: ({ mode }) => ({
-    name: mode === 'development' ? 'PDS Analyzer [DEV] v2.0.0' : 'Porsche Design System Analyzer v2.0.0',
+    name: mode === 'development' ? `PDS Analyzer [DEV] v${version}` : `Porsche Design System Analyzer v${version}`,
     description:
       'Analysiert Websites auf Porsche Design System Compliance und identifiziert UI-Komponenten',
-    version: '2.0.0',
+    version,
+
     permissions: ['scripting'],
     host_permissions: ['<all_urls>'],
     icons: {

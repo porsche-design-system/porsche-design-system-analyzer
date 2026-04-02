@@ -8,7 +8,7 @@ node_modules/
 # Distribution
 *.crx
 # Allow the distribution zip in root
-!porsche-design-system-analyzer-chrome.zip
+!porsche-design-system-analyzer-v*-chrome.zip
 
 # OS
 .DS_Store
