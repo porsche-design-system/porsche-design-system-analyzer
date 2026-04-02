@@ -11,7 +11,7 @@ export default defineConfig({
     keepProfileChanges: true,
   },
   manifest: ({ mode }) => ({
-    name: mode === 'development' ? `PDS Analyzer [DEV] v${version}` : `Porsche Design System Analyzer v${version}`,
+    name: mode === 'development' ? `PDS Analyzer [DEV]` : `Porsche Design System Analyzer`,
     description:
       'Analysiert Websites auf Porsche Design System Compliance und identifiziert UI-Komponenten',
     version,
