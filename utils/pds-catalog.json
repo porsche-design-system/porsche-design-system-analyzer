@@ -1,0 +1,695 @@
+{
+  "version": "4.10.1",
+  "tags": {
+    "p-accordion": {
+      "kind": "component",
+      "deprecatedProps": [
+        {
+          "prop": "size",
+          "attr": "size",
+          "message": "Will be removed in the next major release. Use the `summary` slot instead.",
+          "default": "small"
+        },
+        {
+          "prop": "heading",
+          "attr": "heading",
+          "message": "Will be removed in the next major release. Use the `summary` slot instead.",
+          "default": null
+        },
+        {
+          "prop": "headingTag",
+          "attr": "heading-tag",
+          "message": "Will be removed in the next major release. Use the `summary` slot instead.",
+          "default": "h2"
+        }
+      ]
+    },
+    "p-ai-tag": {
+      "kind": "component",
+      "deprecatedValues": [
+        {
+          "prop": "locale",
+          "attr": "locale",
+          "values": [
+            "ar_BH",
+            "ar_KW",
+            "ar_QA",
+            "ar_SA",
+            "az_AZ",
+            "bg_BG",
+            "bs_BA",
+            "cs_CZ",
+            "cs_SK",
+            "da_DK",
+            "de_AT",
+            "de_CH",
+            "de_DE",
+            "de_LI",
+            "de_LU",
+            "el_GR",
+            "en_AE",
+            "en_AE_x_abu_dhabi",
+            "en_AE_x_abudhabi",
+            "en_AE_x_dubai",
+            "en_AL",
+            "en_AU",
+            "en_BA",
+            "en_BG",
+            "en_BH",
+            "en_BN",
+            "en_CA",
+            "en_CH",
+            "en_CN",
+            "en_CW",
+            "en_CY",
+            "en_CZ",
+            "en_DK",
+            "en_EE",
+            "en_EG",
+            "en_FI",
+            "en_GB",
+            "en_GE",
+            "en_GH",
+            "en_GI",
+            "en_GR",
+            "en_HK",
+            "en_HR",
+            "en_HT",
+            "en_ID",
+            "en_IE",
+            "en_IL",
+            "en_IN",
+            "en_IS",
+            "en_JM",
+            "en_JO",
+            "en_KH",
+            "en_KR",
+            "en_KW",
+            "en_KZ",
+            "en_LB",
+            "en_LK",
+            "en_LT",
+            "en_LV",
+            "en_ME",
+            "en_MK",
+            "en_MN",
+            "en_MT",
+            "en_MU",
+            "en_MY",
+            "en_NC",
+            "en_NL",
+            "en_NO",
+            "en_NZ",
+            "en_OM",
+            "en_PF",
+            "en_PH",
+            "en_PL",
+            "en_PR",
+            "en_QA",
+            "en_RO",
+            "en_RS",
+            "en_SA",
+            "en_SE",
+            "en_SG",
+            "en_SI",
+            "en_SK",
+            "en_TH",
+            "en_TR",
+            "en_TT",
+            "en_TW",
+            "en_UA",
+            "en_US",
+            "en_VE",
+            "en_VN",
+            "en_XA",
+            "en_YE",
+            "en_ZA",
+            "es_AD",
+            "es_AR",
+            "es_BO",
+            "es_CL",
+            "es_CO",
+            "es_CR",
+            "es_DO",
+            "es_EC",
+            "es_ES",
+            "es_GT",
+            "es_HN",
+            "es_MX",
+            "es_PA",
+            "es_PE",
+            "es_PR",
+            "es_PY",
+            "es_SV",
+            "es_TT",
+            "es_UY",
+            "es_VE",
+            "et_EE",
+            "fi_FI",
+            "fr_BE",
+            "fr_CA",
+            "fr_CH",
+            "fr_DZ",
+            "fr_FR",
+            "fr_GP",
+            "fr_LI",
+            "fr_LU",
+            "fr_MA",
+            "fr_MC",
+            "fr_MQ",
+            "fr_MU",
+            "fr_NC",
+            "fr_PF",
+            "fr_RE",
+            "fr_TN",
+            "he_IL",
+            "hr_HR",
+            "hu_HU",
+            "hy_AM",
+            "is_IS",
+            "it_CH",
+            "it_IT",
+            "ja_JP",
+            "ka_GE",
+            "ko_KR",
+            "lt_LT",
+            "lv_LV",
+            "me_ME",
+            "mk_MK",
+            "mt_MT",
+            "nb_NO",
+            "nl_BE",
+            "nl_NL",
+            "no_NO",
+            "pl_PL",
+            "pt_BR",
+            "pt_PT",
+            "ro_MD",
+            "ro_RO",
+            "ru_AZ",
+            "ru_BY",
+            "ru_CY",
+            "ru_EE",
+            "ru_KZ",
+            "ru_LT",
+            "ru_LV",
+            "ru_RU",
+            "ru_UK",
+            "ru_UZ",
+            "sk_SK",
+            "sl_SI",
+            "sr_ME",
+            "sr_RS",
+            "sv_SE",
+            "tr_TR",
+            "uk_UA",
+            "zh_CN",
+            "zh_HK",
+            "zh_TW"
+          ],
+          "default": "en-US"
+        }
+      ]
+    },
+    "p-banner": {
+      "kind": "component"
+    },
+    "p-button": {
+      "kind": "component"
+    },
+    "p-button-group": {
+      "kind": "component",
+      "removedInV4": true,
+      "replacedBy": "CSS / Tailwind CSS (role=\"group\")"
+    },
+    "p-button-pure": {
+      "kind": "component",
+      "deprecatedValues": [
+        {
+          "prop": "size",
+          "attr": "size",
+          "values": [
+            "xx-small",
+            "x-small",
+            "small",
+            "medium",
+            "large",
+            "x-large"
+          ],
+          "default": "sm"
+        }
+      ]
+    },
+    "p-button-tile": {
+      "kind": "component"
+    },
+    "p-canvas": {
+      "kind": "component",
+      "experimental": true
+    },
+    "p-carousel": {
+      "kind": "component"
+    },
+    "p-checkbox": {
+      "kind": "component"
+    },
+    "p-checkbox-wrapper": {
+      "kind": "component",
+      "removedInV4": true,
+      "replacedBy": "p-checkbox",
+      "wrapping": true
+    },
+    "p-content-wrapper": {
+      "kind": "component",
+      "removedInV4": true,
+      "replacedBy": "Porsche Grid (CSS / Tailwind CSS)"
+    },
+    "p-crest": {
+      "kind": "component",
+      "wrapping": true
+    },
+    "p-display": {
+      "kind": "component",
+      "deprecated": "since v4.0.0, will be removed with next major release. Please use `p-heading` instead."
+    },
+    "p-divider": {
+      "kind": "component"
+    },
+    "p-drilldown": {
+      "kind": "component",
+      "experimental": true
+    },
+    "p-drilldown-item": {
+      "kind": "sub",
+      "experimental": true
+    },
+    "p-drilldown-link": {
+      "kind": "sub",
+      "experimental": true
+    },
+    "p-fieldset": {
+      "kind": "component"
+    },
+    "p-fieldset-wrapper": {
+      "kind": "component",
+      "removedInV4": true,
+      "replacedBy": "p-fieldset"
+    },
+    "p-flag": {
+      "kind": "component",
+      "deprecatedValues": [
+        {
+          "prop": "size",
+          "attr": "size",
+          "values": [
+            "xx-small",
+            "x-small",
+            "small",
+            "medium",
+            "large",
+            "x-large",
+            "xx-large"
+          ],
+          "default": "sm"
+        }
+      ]
+    },
+    "p-flex": {
+      "kind": "component",
+      "removedInV4": true,
+      "replacedBy": "CSS Flexbox / Tailwind CSS"
+    },
+    "p-flex-item": {
+      "kind": "sub",
+      "removedInV4": true,
+      "replacedBy": "CSS Flexbox / Tailwind CSS"
+    },
+    "p-flyout": {
+      "kind": "component"
+    },
+    "p-grid": {
+      "kind": "component",
+      "removedInV4": true,
+      "replacedBy": "CSS Grid / Tailwind CSS"
+    },
+    "p-grid-item": {
+      "kind": "sub",
+      "removedInV4": true,
+      "replacedBy": "CSS Grid / Tailwind CSS"
+    },
+    "p-heading": {
+      "kind": "component",
+      "deprecatedValues": [
+        {
+          "prop": "size",
+          "attr": "size",
+          "values": [
+            "small",
+            "medium",
+            "large",
+            "x-large",
+            "xx-large"
+          ],
+          "default": "2xl"
+        },
+        {
+          "prop": "weight",
+          "attr": "weight",
+          "values": [
+            "regular",
+            "semi-bold"
+          ],
+          "default": "normal"
+        }
+      ]
+    },
+    "p-headline": {
+      "kind": "component",
+      "removedInV4": true,
+      "replacedBy": "p-heading"
+    },
+    "p-icon": {
+      "kind": "component",
+      "deprecatedValues": [
+        {
+          "prop": "size",
+          "attr": "size",
+          "values": [
+            "xx-small",
+            "x-small",
+            "small",
+            "medium",
+            "large",
+            "x-large",
+            "xx-large"
+          ],
+          "default": "sm"
+        }
+      ]
+    },
+    "p-inline-notification": {
+      "kind": "component"
+    },
+    "p-input-date": {
+      "kind": "component"
+    },
+    "p-input-email": {
+      "kind": "component"
+    },
+    "p-input-month": {
+      "kind": "component"
+    },
+    "p-input-number": {
+      "kind": "component"
+    },
+    "p-input-password": {
+      "kind": "component"
+    },
+    "p-input-search": {
+      "kind": "component"
+    },
+    "p-input-tel": {
+      "kind": "component"
+    },
+    "p-input-text": {
+      "kind": "component"
+    },
+    "p-input-time": {
+      "kind": "component"
+    },
+    "p-input-url": {
+      "kind": "component"
+    },
+    "p-input-week": {
+      "kind": "component"
+    },
+    "p-link": {
+      "kind": "component",
+      "wrapping": true
+    },
+    "p-link-pure": {
+      "kind": "component",
+      "wrapping": true,
+      "deprecatedValues": [
+        {
+          "prop": "size",
+          "attr": "size",
+          "values": [
+            "xx-small",
+            "x-small",
+            "small",
+            "medium",
+            "large",
+            "x-large"
+          ],
+          "default": "sm"
+        }
+      ]
+    },
+    "p-link-social": {
+      "kind": "component",
+      "removedInV4": true,
+      "replacedBy": "",
+      "wrapping": true
+    },
+    "p-link-tile": {
+      "kind": "component",
+      "wrapping": true
+    },
+    "p-link-tile-model-signature": {
+      "kind": "component",
+      "removedInV4": true,
+      "replacedBy": "",
+      "wrapping": true
+    },
+    "p-link-tile-product": {
+      "kind": "component",
+      "experimental": true,
+      "wrapping": true
+    },
+    "p-marque": {
+      "kind": "component",
+      "removedInV4": true,
+      "replacedBy": "p-wordmark / p-crest",
+      "wrapping": true
+    },
+    "p-modal": {
+      "kind": "component"
+    },
+    "p-model-signature": {
+      "kind": "component"
+    },
+    "p-multi-select": {
+      "kind": "component"
+    },
+    "p-multi-select-option": {
+      "kind": "sub"
+    },
+    "p-optgroup": {
+      "kind": "sub"
+    },
+    "p-pagination": {
+      "kind": "component"
+    },
+    "p-pin-code": {
+      "kind": "component"
+    },
+    "p-popover": {
+      "kind": "component"
+    },
+    "p-radio-button-wrapper": {
+      "kind": "component",
+      "removedInV4": true,
+      "replacedBy": "p-radio-group",
+      "wrapping": true
+    },
+    "p-radio-group": {
+      "kind": "component"
+    },
+    "p-radio-group-option": {
+      "kind": "sub"
+    },
+    "p-scroller": {
+      "kind": "component",
+      "deprecatedProps": [
+        {
+          "prop": "alignScrollIndicator",
+          "attr": "align-scroll-indicator",
+          "message": "since v4.0.0, will be removed with next major release, has no effect anymore.",
+          "default": "center"
+        },
+        {
+          "prop": "scrollToPosition",
+          "attr": "scroll-to-position",
+          "message": "since v4.0.0, use native `scrollIntoView()` on the slotted element itself.",
+          "default": null
+        }
+      ]
+    },
+    "p-segmented-control": {
+      "kind": "component"
+    },
+    "p-segmented-control-item": {
+      "kind": "sub"
+    },
+    "p-select": {
+      "kind": "component"
+    },
+    "p-select-option": {
+      "kind": "sub"
+    },
+    "p-select-wrapper": {
+      "kind": "component",
+      "removedInV4": true,
+      "replacedBy": "p-select",
+      "wrapping": true
+    },
+    "p-select-wrapper-dropdown": {
+      "kind": "internal",
+      "removedInV4": true,
+      "replacedBy": "p-select"
+    },
+    "p-sheet": {
+      "kind": "component"
+    },
+    "p-spinner": {
+      "kind": "component",
+      "deprecatedValues": [
+        {
+          "prop": "size",
+          "attr": "size",
+          "values": [
+            "small",
+            "medium",
+            "large"
+          ],
+          "default": "sm"
+        }
+      ]
+    },
+    "p-stepper-horizontal": {
+      "kind": "component"
+    },
+    "p-stepper-horizontal-item": {
+      "kind": "sub"
+    },
+    "p-switch": {
+      "kind": "component"
+    },
+    "p-table": {
+      "kind": "component"
+    },
+    "p-table-body": {
+      "kind": "sub"
+    },
+    "p-table-cell": {
+      "kind": "sub"
+    },
+    "p-table-head": {
+      "kind": "sub"
+    },
+    "p-table-head-cell": {
+      "kind": "sub"
+    },
+    "p-table-head-row": {
+      "kind": "sub"
+    },
+    "p-table-row": {
+      "kind": "sub"
+    },
+    "p-tabs": {
+      "kind": "component",
+      "deprecatedProps": [
+        {
+          "prop": "weight",
+          "attr": "weight",
+          "message": "Will be removed in the next major release. Has no effect anymore.",
+          "default": "regular"
+        }
+      ]
+    },
+    "p-tabs-bar": {
+      "kind": "component",
+      "deprecatedProps": [
+        {
+          "prop": "weight",
+          "attr": "weight",
+          "message": "Will be removed in the next major release. Has no effect anymore.",
+          "default": "regular"
+        }
+      ]
+    },
+    "p-tabs-item": {
+      "kind": "sub"
+    },
+    "p-tag": {
+      "kind": "component"
+    },
+    "p-tag-dismissible": {
+      "kind": "component"
+    },
+    "p-text": {
+      "kind": "component",
+      "deprecatedValues": [
+        {
+          "prop": "size",
+          "attr": "size",
+          "values": [
+            "xx-small",
+            "x-small",
+            "small",
+            "medium",
+            "large",
+            "x-large"
+          ],
+          "default": "sm"
+        },
+        {
+          "prop": "weight",
+          "attr": "weight",
+          "values": [
+            "regular",
+            "semi-bold"
+          ],
+          "default": "normal"
+        }
+      ]
+    },
+    "p-text-field-wrapper": {
+      "kind": "component",
+      "removedInV4": true,
+      "replacedBy": "p-input-*",
+      "wrapping": true
+    },
+    "p-text-list": {
+      "kind": "component"
+    },
+    "p-text-list-counter": {
+      "kind": "internal",
+      "removedInV4": true,
+      "replacedBy": ""
+    },
+    "p-text-list-item": {
+      "kind": "sub"
+    },
+    "p-textarea": {
+      "kind": "component"
+    },
+    "p-textarea-wrapper": {
+      "kind": "component",
+      "removedInV4": true,
+      "replacedBy": "p-textarea",
+      "wrapping": true
+    },
+    "p-toast": {
+      "kind": "component"
+    },
+    "p-toast-item": {
+      "kind": "internal"
+    },
+    "p-wordmark": {
+      "kind": "component",
+      "wrapping": true
+    }
+  }
+}

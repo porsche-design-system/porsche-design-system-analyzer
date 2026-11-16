@@ -12,8 +12,8 @@ export default defineConfig({
   },
   manifest: ({ mode }) => ({
     name: mode === 'development' ? `PDS Analyzer [DEV]` : `Porsche Design System Analyzer`,
-    description:
-      'Analysiert Websites auf Porsche Design System Compliance und identifiziert UI-Komponenten',
+    description: '__MSG_extDescription__',
+    default_locale: 'en',
     version,
 
     permissions: ['scripting'],
