@@ -1,16 +1,25 @@
 {
   "name": "porsche-design-system-analyzer",
-  "version": "2.1.0",
-  "description": "Analysiert Websites auf Porsche Design System Compliance",
+  "version": "2.2.0",
+  "description": "Analyzes websites for Porsche Design System compliance",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "wxt",
-    "build": "node -e \"require('fs').readdirSync('.').filter(f=>/^porsche-design-system-analyzer(-v.*)?-chrome\\.zip$/.test(f)).forEach(f=>require('fs').unlinkSync(f))\" && wxt build",
+    "catalog": "node scripts/generate-catalog.mjs",
+    "typecheck": "wxt prepare && tsc --noEmit",
+    "test": "vitest run",
+    "build": "npm run catalog && node -e \"require('fs').readdirSync('.').filter(f=>/^porsche-design-system-analyzer(-v.*)?-chrome\\.zip$/.test(f)).forEach(f=>require('fs').unlinkSync(f))\" && wxt build",
     "zip": "wxt zip",
-    "deploy": "wxt zip && node -e \"const v=require('./package.json').version,fs=require('fs'),g=fs.readdirSync('.').filter(f=>/^porsche-design-system-analyzer(-v.*)?-chrome\\.zip$/.test(f));g.forEach(f=>fs.unlinkSync(f));fs.copyFileSync('.output/porsche-design-system-analyzer-'+v+'-chrome.zip','./porsche-design-system-analyzer-v'+v+'-chrome.zip');const r=fs.readFileSync('README.md','utf8').replace(/porsche-design-system-analyzer-v[^)]+\\.zip/,'porsche-design-system-analyzer-v'+v+'-chrome.zip');fs.writeFileSync('README.md',r);\""
+    "deploy": "npm run catalog && wxt zip && node -e \"const v=require('./package.json').version,fs=require('fs'),g=fs.readdirSync('.').filter(f=>/^porsche-design-system-analyzer(-v.*)?-chrome\\.zip$/.test(f));g.forEach(f=>fs.unlinkSync(f));fs.copyFileSync('.output/porsche-design-system-analyzer-'+v+'-chrome.zip','./porsche-design-system-analyzer-v'+v+'-chrome.zip');const r=fs.readFileSync('README.md','utf8').replace(/porsche-design-system-analyzer-v[^)]+\\.zip/,'porsche-design-system-analyzer-v'+v+'-chrome.zip');fs.writeFileSync('README.md',r);\"",
+    "postinstall": "wxt prepare"
   },
-  "dependencies": {
-    "wxt": "^0.20.20"
+  "devDependencies": {
+    "@porsche-design-system/components-js": "^4.10.1",
+    "@types/chrome": "^0.3.7",
+    "jsdom": "^31.0.1",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.12",
+    "wxt": "^0.21.5"
   }
 }

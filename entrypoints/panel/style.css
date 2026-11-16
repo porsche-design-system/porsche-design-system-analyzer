@@ -638,11 +638,19 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Staggered stat card entrance */
-.quick-stats .stat,
-.quick-stats .version-table-wrap,
-.quick-stats .compliance-formula {
+/* Staggered stat card entrance (only right after an analysis, not on re-renders) */
+.quick-stats.animate .stat,
+.quick-stats.animate .version-table-wrap,
+.quick-stats.animate .compliance-formula,
+.quick-stats.animate .version-badge {
     animation: fadeUp 0.35s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 .quick-stats > :nth-child(1) { animation-delay: 0s; }
 .quick-stats > :nth-child(2) { animation-delay: 0.06s; }
@@ -1105,4 +1113,138 @@ details.custom-group > summary:hover {
 .dom-info.minimal {
     padding: var(--spacing-xs) var(--spacing-sm);
     background: var(--color-surface-dark);
+}
+
+/* ---------- v2.2: language switch ---------- */
+.header {
+    position: relative;
+}
+
+.lang-switch {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: inline-flex;
+    border: 1px solid var(--color-contrast-low-dark);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.lang-btn {
+    background: transparent;
+    border: none;
+    padding: 2px 8px;
+    font-family: var(--font-porsche-next);
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-contrast-medium-dark);
+    cursor: pointer;
+}
+
+.lang-btn:hover {
+    color: var(--color-primary-dark);
+}
+
+.lang-btn[aria-pressed="true"] {
+    background: var(--color-primary-dark);
+    color: var(--color-base-dark);
+}
+
+.lang-btn:focus-visible,
+.tab-btn:focus-visible {
+    outline: 2px solid var(--color-focus-dark);
+    outline-offset: 2px;
+}
+
+@media (max-width: 420px) {
+    .lang-switch {
+        position: static;
+        margin-bottom: var(--spacing-sm);
+    }
+}
+
+/* ---------- v2.2: badges, deprecations, sub-components ---------- */
+.badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 6px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-porsche-next);
+    font-size: 10px;
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.badge.error { background: var(--color-error-soft-dark); color: var(--color-error-dark); }
+.badge.warning { background: var(--color-warning-soft-dark); color: var(--color-warning-dark); }
+.badge.info { background: var(--color-info-soft-dark); color: var(--color-info-dark); }
+.badge.neutral { background: var(--color-surface-dark); color: var(--color-contrast-medium-dark); border: 1px solid var(--color-contrast-low-dark); }
+
+.tab-count.info {
+    background: rgba(23, 139, 255, 0.15);
+    color: var(--color-info-dark);
+}
+
+.tab-btn.active[data-tab="deprecations"] {
+    color: var(--color-info-dark);
+    border-bottom-color: var(--color-info-dark);
+}
+
+.scan-note {
+    margin-top: var(--spacing-xs);
+    font-size: 11px;
+    color: var(--color-contrast-medium-dark);
+}
+
+.neutral-count {
+    background: var(--color-contrast-low-dark);
+    color: var(--color-primary-dark);
+}
+
+.custom-source-badge.confidence-high { color: var(--color-error-dark); border-color: var(--color-error-dark); }
+.custom-source-badge.confidence-medium { color: var(--color-warning-dark); border-color: var(--color-warning-dark); }
+.custom-source-badge.confidence-low { color: var(--color-contrast-medium-dark); }
+
+.sub-group {
+    margin-top: var(--spacing-md);
+}
+
+.tab-content > .component-section > .hint {
+    margin-bottom: var(--spacing-md);
+}
+
+/* ---------- v2.2: score options, not-scored findings ---------- */
+.score-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs) var(--spacing-md);
+    font-size: 12px;
+    color: var(--color-contrast-high-dark);
+}
+
+.score-options label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.score-options input {
+    accent-color: var(--color-primary-dark);
+}
+
+.subsection-title {
+    margin: var(--spacing-lg) 0 var(--spacing-sm);
+    font-size: 12px;
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-contrast-medium-dark);
+}
+
+.custom-group.not-scored .custom-type-name {
+    color: var(--color-contrast-high-dark);
 }

@@ -1,29 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <div id="status" class="status" style="display: none;"></div>
+    <div id="status" class="status" role="status" aria-live="polite" style="display: none;"></div>
 
     <div id="mainView" class="main-view">
         <div class="header">
+            <div class="lang-switch" role="group" data-i18n-aria-label="lang.label">
+                <button type="button" class="lang-btn" data-lang="de" lang="de">DE</button>
+                <button type="button" class="lang-btn" data-lang="en" lang="en">EN</button>
+            </div>
             <h1>Porsche Design System Analyzer</h1>
-            <p>v<span id="extVersion"></span> · DS Compliance Check für Web-Komponenten</p>
+            <p>v<span id="extVersion"></span> · <span data-i18n="header.subtitle"></span></p>
         </div>
 
-        <button id="analyzeBtn" class="analyze-btn">Website analysieren</button>
+        <button id="analyzeBtn" class="analyze-btn" data-i18n="analyze"></button>
 
         <div id="quickStats" class="quick-stats" style="display: none;"></div>
 
         <div id="tabContainer" class="tab-container" style="display: none;">
-            <div class="tab-bar">
-                <button class="tab-btn active" data-tab="pds">PDS Elemente</button>
-                <button class="tab-btn" data-tab="custom">Custom Elemente</button>
+            <div class="tab-bar" role="tablist">
+                <button class="tab-btn active" role="tab" data-tab="pds"></button>
+                <button class="tab-btn" role="tab" data-tab="custom"></button>
+                <button class="tab-btn" role="tab" data-tab="deprecations"></button>
             </div>
-            <div id="tabContent" class="tab-content"></div>
+            <div id="tabContent" class="tab-content" role="tabpanel"></div>
         </div>
     </div>
 
