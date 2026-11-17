@@ -4,7 +4,7 @@ Chrome DevTools Extension for analyzing websites for Porsche Design System compl
 
 ## Download & Installation
 
-**[⬇ Download Extension](https://github.com/porsche-design-system/porsche-design-system-analyzer/raw/main/porsche-design-system-analyzer-v2.1.0-chrome.zip)**
+**[⬇ Download Extension](https://github.com/porsche-design-system/porsche-design-system-analyzer/raw/main/porsche-design-system-analyzer-v2.2.0-chrome.zip)**
 
 ### Install in Chrome
 
