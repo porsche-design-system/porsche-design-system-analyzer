@@ -19,9 +19,11 @@ Chrome DevTools Extension for analyzing websites for Porsche Design System compl
 2. Select the **"PDS Analyzer"** tab in DevTools
 3. Click **"Analyze website"**
 
+![PDS Analyzer tab in Chrome DevTools](sample.png)
+
 The UI is available in **English and German** (switch top right; defaults to the browser language).
 
-![PDS Analyzer](sample.png)
+![PDS Analyzer panel on porsche.com](screenshot.png)
 
 ## How the compliance score works
 
